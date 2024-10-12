@@ -2,6 +2,7 @@ package logger
 
 import (
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
 )
 
@@ -9,13 +10,17 @@ var logger = logrus.New()
 
 func init() {
 	// 设置日志级别为Info
-	logger.SetLevel(logrus.InfoLevel)
+	SetLevel(InfoLevel)
 
 	// 设置日志格式为JSON格式
-	logger.SetFormatter(&DefaultFormatter{})
+	SetFormatter(&DefaultFormatter{})
 
 	// 设置输出到标准错误输出
-	logger.SetOutput(os.Stdout)
+	SetOutput(os.Stdout)
+}
+
+func SetOutput(output io.Writer) {
+	logger.SetOutput(output)
 }
 
 func SetFormatter(formatter logrus.Formatter) {
