@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"github.com/Zcentury/logger/formatter"
+	"github.com/Zcentury/logger/levels"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
@@ -10,24 +12,33 @@ var logger = logrus.New()
 
 func init() {
 	// 设置日志级别为Info
-	SetLevel(InfoLevel)
+	SetLevel(levels.InfoLevel)
 
 	// 设置日志格式为JSON格式
-	SetFormatter(&DefaultFormatter{})
+	SetFormatter(&formatter.CLI{
+		UseColor: true,
+	})
 
 	// 设置输出到标准错误输出
 	SetOutput(os.Stdout)
 }
 
-func SetOutput(output io.Writer) {
-	logger.SetOutput(output)
+func SetOutput(outputs ...io.Writer) {
+	if len(outputs) == 0 {
+		return
+	}
+	if len(outputs) > 1 {
+		logger.SetOutput(io.MultiWriter(outputs...))
+	} else {
+		logger.SetOutput(outputs[0])
+	}
 }
 
 func SetFormatter(formatter logrus.Formatter) {
 	logger.SetFormatter(formatter)
 }
 
-func SetLevel(level int) {
+func SetLevel(level levels.Level) {
 	logger.SetLevel(logrus.Level(level))
 }
 
