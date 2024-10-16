@@ -15,8 +15,8 @@ type CLIAndFileFormatter struct {
 }
 
 func (f *CLIAndFileFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	isTerminal := checkTerminal(entry.Logger.Out)
-	fmt.Println(isTerminal)
+	//isTerminal := checkTerminal(entry.Logger.Out)
+	//fmt.Println(isTerminal)
 
 	level := levels.Level(entry.Level)
 	var levelData string
