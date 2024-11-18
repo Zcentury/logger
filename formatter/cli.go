@@ -5,6 +5,8 @@ import (
 	"github.com/Zcentury/logger/levels"
 	"github.com/logrusorgru/aurora/v4"
 	"github.com/sirupsen/logrus"
+	"os"
+	"path/filepath"
 )
 
 // CLI 在控制台中输出日志
@@ -39,7 +41,21 @@ func (f *CLI) Format(entry *logrus.Entry) ([]byte, error) {
 	var logMsg string
 
 	if entry.HasCaller() {
-		triggerPosition := fmt.Sprintf("%s:%d", entry.Caller.Function, entry.Caller.Line)
+		entry.Caller = getCaller()
+		var ph string
+
+		cwd, err := os.Getwd()
+		if err != nil {
+			ph = entry.Caller.Function
+		} else {
+			// 计算相对路径
+			if relativePath, err := filepath.Rel(cwd, entry.Caller.File); err != nil {
+				ph = entry.Caller.Function
+			} else {
+				ph = relativePath
+			}
+		}
+		triggerPosition := fmt.Sprintf("%s:%d", ph, entry.Caller.Line)
 
 		logMsg = fmt.Sprintf("|%s| %s | %s | %s\n", levelData, tm, aurora.Bold(aurora.Underline(aurora.Blue(triggerPosition))).String(), entry.Message)
 	} else {
